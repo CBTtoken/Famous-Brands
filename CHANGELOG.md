@@ -26,6 +26,9 @@ Growth is Next.js 16 on Vercel with Supabase for auth, database and storage. Mos
 - Kept for later, when another system starts posting to this app: Growth's single webhook signature checker (`src/lib/webhooks/signature.ts`), the pattern to follow for the first Munch, Aura or OPUS callback.
 - Not present in Growth, so built here: push notifications, a checklist builder, stock tracking, role-based shop access.
 
+**Deployed**
+- To the existing "Famous Brands" Coolify project on the Coolify host, through Coolify's API: PostgreSQL 16 (1 CPU, 512 MB, not public, nightly backup kept 14 days on the server), the app from this branch (1 CPU, 768 MB, `https://sos-poc.digitalflyer.co.za`), a persistent photo volume at `/data`, and the alert retry every 5 minutes. The first deploy was rolled back by Coolify because its health check needs `curl`, which the slim image lacks; with Coolify's check off it uses the Dockerfile's Node health check, and the second deploy came up healthy. Health report from inside the container: database, photo storage and push keys all ok.
+
 **Tested**
 - 42 integration and unit tests against PostgreSQL, including a photo changed by one byte in storage being refused. Browser walks at phone width: 28 of 28 acceptance checks, 4 of 4 offline checks, 7 of 7 demo checks. Typecheck, lint, style check and production build pass.
 

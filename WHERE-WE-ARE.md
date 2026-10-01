@@ -8,7 +8,7 @@ One page. What is true today, what is waiting on somebody, and what is next.
 
 ## In one line
 
-The proof of concept is built, on GitHub and tested end to end, with Dewald's decisions applied. It is not deployed yet: the one thing in the way is that Coolify rejects the token saved in the cloud build environment.
+The proof of concept is live at `https://sos-poc.digitalflyer.co.za`, in the "Famous Brands" Coolify project, running and healthy, with Dewald's decisions applied. Next: Dewald signs in, makes the demo group, and push is proven on a real phone.
 
 ---
 
@@ -25,7 +25,7 @@ The proof of concept is built, on GitHub and tested end to end, with Dewald's de
 
 ## What is not live
 
-- **Not deployed.** `INFRASTRUCTURE.md` has the exact steps for the existing "Famous Brands" Coolify project, fully isolated from HelpLift.
+- **Deployed 1 October 2026** to the "Famous Brands" Coolify project (database, app, photo volume, nightly database backup, alert retry every 5 minutes). Every resource and how it was verified is in `INFRASTRUCTURE.md`.
 - **On GitHub, not merged.** Branch `claude/famous-brands-sos-poc-9a6ipo` carries everything (it builds on `claude/confident-heisenberg-c70ifu`). `main` still has only the source documents.
 - **Push alerts on a real phone are not proven yet.** Proven against a stand-in push service that decrypts the message. A real phone needs the HTTPS address.
 
@@ -35,14 +35,15 @@ The proof of concept is built, on GitHub and tested end to end, with Dewald's de
 
 In the order it blocks things.
 
-1. **The Coolify token in the cloud environment.** `setx COOLIFY_TOKEN` sets it on the Windows machine only. The cloud session uses its own saved credential, **FamousBrands** (environment menu, Edit), and Coolify answered "Unauthenticated" to it on 1 October. Put the same token there. Never paste it into a chat.
+1. **First sign-in.** Sign in as the platform admin (`info@digitalflyer.co.za`, first password in Coolify under sos-app, Environment Variables, `BOOTSTRAP_ADMIN_PASSWORD`), choose a new password, then remove the four `BOOTSTRAP_*` variables.
 2. **Pilot shop and sign-off contact** at Famous Brands, and which phone the supervisor uses. Until then the POC is shown with the demo accounts.
 3. **Quality Ratio formula.** Until then the two raw rates are shown side by side.
 4. **OPUS.** What it is (tills, stock, or training?). Decided: API connection points only for the POC, connected later, the same as Munch and Aura.
 5. **Gerhard's CONFIRM items** in the 46 tasks (ranges, number of ovens and fridges, licence list, long-term interval). They load as drafts with the ranges empty until then.
 6. **Which smalls are franchise-locked** to Catercare (Supplier-Findings open item 1). Every item says "not confirmed" until then.
 7. **POPIA staff agreement** before any real employee is added. The app records location at check-in and per answer, during the shift only.
-8. **HelpLift's "This VM is shared" section** exists only on Dewald's machine. Commit and push it so every session can read it.
+8. **Off-box backups.** The database is backed up nightly, but only onto the same server, and photos are not backed up at all. Needs an S3-compatible target.
+9. **HelpLift's "This VM is shared" section** exists only on Dewald's machine. Commit and push it so every session can read it.
 
 ## Decided by Dewald, 1 October 2026
 
@@ -71,8 +72,7 @@ In the order it blocks things.
 
 ## What is next
 
-1. Deploy to the "Famous Brands" Coolify project once the token is accepted, then check `/api/health` on `sos-poc.digitalflyer.co.za`.
-2. Make the demo group, and prove push on a real Android phone and a real iPhone (Home Screen install).
-3. Walk the whole flow on the pilot supervisor's own phone, in the shop, once the pilot is known.
-4. Load Gerhard's tasks, fill in the CONFIRMs together, set tiers, publish.
-5. Quality Ratio, once the formula is agreed.
+1. Make the demo group, and prove push on a real Android phone and a real iPhone (Home Screen install).
+2. Walk the whole flow on the pilot supervisor's own phone, in the shop, once the pilot is known.
+3. Load Gerhard's tasks, fill in the CONFIRMs together, set tiers, publish.
+4. Quality Ratio, once the formula is agreed.

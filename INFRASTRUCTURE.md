@@ -23,11 +23,15 @@ All in the existing **Famous Brands** project (`q2jwvhgbt9wo0fwew4pillxp`), envi
 |---|---|---|---|
 | Database | `sos-postgres` | `lbirp10sphxls3wjqvf4qgqj` | PostgreSQL 16 (alpine), database and user `sos`, not public, 1 CPU, 512 MB |
 | Database backup | | `fpy8gs6xf0z8ew6cebgucnzp` | Daily 01:15, keeps 14, on the server only (no off-box copy yet) |
-| Application | `sos-app` | `rfpklnktdz3dzewypcltr2mr` | Dockerfile from `CBTtoken/Famous-Brands`, branch `claude/famous-brands-sos-poc-9a6ipo`, port 3000, `https://sos-poc.digitalflyer.co.za`, HTTPS forced, 1 CPU, 768 MB, health check `/api/health`, auto-deploy off |
+| Application | `sos-app` | `rfpklnktdz3dzewypcltr2mr` | Dockerfile from `CBTtoken/Famous-Brands`, branch `claude/famous-brands-sos-poc-9a6ipo`, port 3000, `https://sos-poc.digitalflyer.co.za`, HTTPS forced, 1 CPU, 768 MB, auto-deploy off. Coolify's own health check is **off** because it needs `curl` or `wget`, which the slim Node image does not have; Coolify uses the Dockerfile's `HEALTHCHECK` instead, which calls `/api/health` with Node |
 | Photo volume | `rfpklnktdz3dzewypcltr2mr-sos-photos` | `by5j6n6nqx9p4pj1edddpf9t` | Mounted at `/data` |
 | Scheduled task | Retry alerts that did not go out | `mybjfs9k70ax9vjmyaea20ps` | Every 5 minutes |
 
 The other two servers in Coolify are not used: **digitalflyer-cloud-01** (`10.0.1.1`, no proxy, nothing on it; it looks like this same machine registered a second time through Docker's internal address) and **Delete** (unreachable).
+
+**Verified after the first deploy, 1 October 2026:** status `running:healthy`; the start-up log shows migrations applied and the first admin created, then on restart "database already up to date" and "1 user(s) already exist"; `/api/health` run inside the container answered database ok (3 migrations), photo storage ok (written to the volume and read back), push keys ok; the alert retry task ran and was accepted. The address itself could not be opened from the build session, whose network policy does not include `sos-poc.digitalflyer.co.za`.
+
+To see the full health report from a session that cannot reach the address: create a disabled scheduled task on `sos-app` with the command `node -e "fetch('http://127.0.0.1:3000/api/health').then(r=>r.text()).then(console.log)"`, call its `/execute`, read `/executions`, then delete it.
 
 Secrets (database password, push keys, `CRON_SECRET`, first admin password) were generated for this deployment and live only in the application's environment variables in Coolify. They are not in this repository.
 
@@ -55,7 +59,7 @@ The Claude Code cloud session that built this app cannot reach the server over S
 3. Verify `/api/health` on the new domain.
 4. Never call an endpoint that touches a resource outside the "Famous Brands" project.
 
-**The token, and where each session finds it.** Sessions on Dewald's Windows machine read it from the `COOLIFY_TOKEN` user variable (`setx`). A Claude Code cloud session cannot see that variable: it runs in its own container, where the token is a saved credential called **FamousBrands** in the cloud environment's settings (environment menu, Edit), sent automatically on every request to `coolify.digitalflyer.co.za`. On 1 October 2026 that saved credential was rejected by Coolify ("Unauthenticated"), so it must hold the same token as `COOLIFY_TOKEN`. The repository is public, so `CBTtoken/Famous-Brands` needs no GitHub App on Coolify's side to build.
+**The token, and where each session finds it.** Sessions on Dewald's Windows machine read it from the `COOLIFY_TOKEN` user variable (`setx`). A Claude Code cloud session cannot see that variable: it runs in its own container, where the token is an API credential called **FamousBrands** in the cloud environment's settings (environment menu, Edit), attached automatically to every request to `coolify.digitalflyer.co.za`. Working since 1 October 2026. If Coolify ever answers "Unauthenticated" with `X-Proxy-Error: upstream auth failed`, the saved credential is wrong, not the token: credentials cannot be edited, so delete every credential for that host and add one again (type Bearer, header `Authorization`, prefix `Bearer`, value the bare token, pasted from `Set-Clipboard $env:COOLIFY_TOKEN`). Two credentials for the same host means only one is sent, without warning. The repository is public, so `CBTtoken/Famous-Brands` needs no GitHub App on Coolify's side to build.
 
 ## Isolation from HelpLift, the rules
 
@@ -125,7 +129,5 @@ The POC stores photos on the app's volume. A phone photo is shrunk on the phone 
 The pilot shop and the Famous Brands sign-off contact are not known yet, so the POC is shown with demo accounts. After signing in as the platform admin, open **Shop groups** and use **Demo accounts**: choose one shared demo password (at least 12 characters) and the app makes a "DEMO shop group (not a real franchisee)" with one demo shop, four demo sign-ins (`admin@`, `area.manager@`, `shop.manager@`, `supervisor@demo.sos.invalid`), a ready test checklist, the client's 46 tasks as drafts and the smalls item list. A banner says "Demo" on every screen inside it. It creates no visits, answers or figures.
 
 ## Not set up yet
-
-- The deployment itself (needs a Coolify token that Coolify accepts, in this session's FamousBrands credential).
 - Off-box backups of the database and photos.
 - Email: there is none. Alerts are push only for now.
