@@ -185,7 +185,16 @@ async function main() {
   await m.getByRole("button", { name: "Sign in" }).click();
   await m.waitForURL("**/sos");
   await shot(m, "11-sos");
-  check(await m.getByText("Waiting on the formula").count() === 1, "S.O.S shows Performance, Report to Famous Brands and Quality Ratio (placeholder)");
+  const qr = m.getByRole("heading", { name: "Quality Ratio" }).locator("xpath=ancestor::section[1]");
+  check(
+    await m.getByRole("link", { name: "Report to Famous Brands" }).count() === 1 &&
+      await m.getByText("Performance").count() > 0 &&
+      await qr.getByText("Formula to be confirmed").count() > 0 &&
+      await qr.getByText("Checklist pass rate").count() === 1 &&
+      await qr.getByText("Stock condition rate").count() === 1 &&
+      await qr.getByText(/^\d+(\.\d)?%$/).count() === 2,
+    "S.O.S shows Performance, Report to Famous Brands and Quality Ratio (two raw rates, formula to be confirmed)",
+  );
   await m.goto(`${BASE}/reports/store/${sA}`);
   await shot(m, "12-store-report");
   check(await m.getByText("11 °C").count() > 0 && await m.getByText("Mobile refuse bin", { exact: false }).count() > 0, "detailed shop report shows the reading, the problem and the broken item");
@@ -195,6 +204,7 @@ async function main() {
   check(csv.status === 200 && csvText.includes("Walk-in fridge temperature"), "report exports as CSV for Excel");
   await m.goto(`${BASE}/reports/franchisor`);
   await shot(m, "13-franchisor-report");
+  check(await m.getByText("Checklist pass rate").count() === 1 && await m.getByText("Formula to be confirmed").count() > 0, "Report to Famous Brands carries the same two raw rates");
   await m.goto(`${BASE}/alerts`);
   await shot(m, "14-alerts");
   await m.goto(`${BASE}/stock?store=${sA}`);

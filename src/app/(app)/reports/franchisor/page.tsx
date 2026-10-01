@@ -4,7 +4,8 @@ import { roleCan } from "@/lib/core/authz";
 import { parseRange, sos } from "@/lib/services/reports";
 import { formatDate, formatDateTime } from "@/lib/core/time";
 import { money } from "@/lib/client-format";
-import { Card, Empty, Notice, Page } from "@/components/ui";
+import { Badge, Card, Empty, Page } from "@/components/ui";
+import { QualityRatio } from "@/components/quality-ratio";
 import { RangePicker } from "@/components/range-picker";
 import { PrintButton } from "@/components/report-parts";
 
@@ -29,14 +30,16 @@ export default async function FranchisorReport({ searchParams }: { searchParams:
             {t.expected ? ` (${Math.round((t.submitted / t.expected) * 1000) / 10}%)` : ""}. {t.exceptions} problem{t.exceptions === 1 ? "" : "s"} recorded.
             {" "}{t.visits} visit{t.visits === 1 ? "" : "s"}, {t.unconfirmed} not confirmed at the store. {t.issues} item{t.issues === 1 ? "" : "s"} currently broken, stolen or worn.
           </p>
-          <div className="mt-3"><Notice>Quality Ratio: waiting on the agreed formula. No score is shown until it is agreed.</Notice></div>
+        </Card>
+        <Card title="Quality Ratio" aside={<Badge>Formula to be confirmed</Badge>}>
+          <QualityRatio qr={d.quality_ratio} />
         </Card>
         <Card title="Shop by shop">
           {d.stores.length === 0 ? <Empty>No shops.</Empty> : (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[720px] text-sm">
                 <thead className="text-left text-xs text-muted">
-                  <tr className="border-b border-line"><th className="py-1 pr-2">Shop</th><th className="pr-2">Checklists done</th><th className="pr-2">On time</th><th className="pr-2">Missed</th><th className="pr-2">Problems</th><th className="pr-2">Visits (unconfirmed)</th><th className="pr-2">Items with a problem</th><th>To order</th></tr>
+                  <tr className="border-b border-line"><th className="py-1 pr-2">Shop</th><th className="pr-2">Checklists done</th><th className="pr-2">On time</th><th className="pr-2">Missed</th><th className="pr-2">Problems</th><th className="pr-2">Pass rate</th><th className="pr-2">Visits (unconfirmed)</th><th className="pr-2">Items fine</th><th>To order</th></tr>
                 </thead>
                 <tbody>
                   {d.stores.map((s) => (
@@ -46,8 +49,9 @@ export default async function FranchisorReport({ searchParams }: { searchParams:
                       <td className="pr-2">{s.on_time_pct == null ? "" : `${s.on_time_pct}%`}</td>
                       <td className="pr-2">{s.missed}</td>
                       <td className="pr-2">{s.exceptions}</td>
+                      <td className="pr-2">{s.checklist_pass_pct == null ? "No data" : `${s.checklist_pass_pct}%`}</td>
                       <td className="pr-2">{s.visits} ({s.visits_unconfirmed})</td>
-                      <td className="pr-2">{s.items ? `${s.items_open_issues} of ${s.items}` : "No list"}</td>
+                      <td className="pr-2">{s.items ? `${s.items - s.items_open_issues} of ${s.items} (${s.stock_condition_pct}%)` : "No list"}</td>
                       <td>{s.open_reorders ? `${s.open_reorders}, ${money(s.open_reorder_value_cents)}` : "0"}</td>
                     </tr>
                   ))}

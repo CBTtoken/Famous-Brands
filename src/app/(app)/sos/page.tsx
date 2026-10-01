@@ -6,7 +6,8 @@ import { parseRange, sos, type StorePerformance } from "@/lib/services/reports";
 import { formatDate } from "@/lib/core/time";
 import { tierLabel, type Tier } from "@/lib/core/tiers";
 import { money } from "@/lib/client-format";
-import { Badge, ButtonLink, Card, Empty, Notice, Page, Stat } from "@/components/ui";
+import { Badge, ButtonLink, Card, Empty, Page, Stat } from "@/components/ui";
+import { QualityRatio } from "@/components/quality-ratio";
 import { RangePicker } from "@/components/range-picker";
 
 export const metadata = { title: "S.O.S" };
@@ -52,6 +53,7 @@ function StoreCard({ s, from, to }: { s: StorePerformance; from: string; to: str
         <Stat label="Missed" value={s.missed} kind={s.missed ? "bad" : undefined} hint={s.in_progress ? `${s.in_progress} in progress now` : undefined} />
         <Stat label="Problems recorded" value={s.exceptions} kind={s.exceptions ? "warn" : undefined}
           hint={tierRows.length ? tierRows.map(([t, n]) => `${n} ${t === "none" ? "untiered" : tierLabel[t].toLowerCase()}`).join(", ") : undefined} />
+        <Stat label="Checklist pass rate" value={pct(s.checklist_pass_pct)} hint={s.answers ? `${s.answers_passed} of ${s.answers} answers` : undefined} />
         <Stat label="Visits" value={s.visits} hint={s.visits_unconfirmed ? `${s.visits_unconfirmed} not confirmed at the store` : "All confirmed at the store"} kind={s.visits_unconfirmed ? "warn" : undefined} />
       </div>
       <WeeklyBars weeks={s.weekly} />
@@ -68,6 +70,7 @@ function StoreCard({ s, from, to }: { s: StorePerformance; from: string; to: str
         <p className="text-sm text-muted">No item list set up for this shop yet.</p>
       ) : (
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <Stat label="Stock condition rate" value={pct(s.stock_condition_pct)} hint={`${s.items - s.items_open_issues} of ${s.items} fine`} />
           <Stat label="Items with a problem" value={s.items_open_issues} hint={`of ${s.items} on the list`} kind={s.items_open_issues ? "warn" : "ok"} />
           <Stat label="Broken / stolen / worn" value={`${s.broken} / ${s.stolen} / ${s.worn}`} />
           <Stat label="Service overdue" value={s.service_overdue} kind={s.service_overdue ? "bad" : undefined} />
@@ -94,12 +97,8 @@ export default async function SosPage({ searchParams }: { searchParams: Promise<
       <p className="-mt-2 mb-3 text-sm text-muted">{org.orgName}. {formatDate(range.from)} to {formatDate(range.to)}. Every figure is counted from records, nothing is estimated.</p>
       <RangePicker base="/sos" from={range.from} to={range.to} />
       <div className="grid gap-4">
-        <Card title="Quality Ratio">
-          <Notice kind="info">
-            Waiting on the formula. The Quality Ratio will combine the figures below into one score, but the weighting has to be agreed
-            with Dewald first, so no score is shown until then. Nothing here is invented.
-          </Notice>
-          <p className="mt-2 text-sm text-muted">Figures ready to feed it: checklists done, done on time, problems by tier, unconfirmed check-ins, and items broken, stolen, worn or overdue for service.</p>
+        <Card title="Quality Ratio" aside={<Badge>Formula to be confirmed</Badge>}>
+          <QualityRatio qr={data.quality_ratio} />
         </Card>
         {data.stores.length === 0 ? <Empty>No stores to show. Add a store under Setup.</Empty> : data.stores.map((s) => <StoreCard key={s.store_id} s={s} from={range.from} to={range.to} />)}
       </div>

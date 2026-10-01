@@ -26,6 +26,7 @@ Everything the screens do goes through this API, so another system (Munch, Aura,
 | | |
 |---|---|
 | `GET/POST /organisations` | Platform admin creates groups |
+| `POST /platform/demo` `{password}` | Platform admin only, once: makes the labelled DEMO shop group, its shop and four demo sign-ins sharing that password |
 | `GET/POST /organisations/:org/stores` | `?mine=1` lists only the caller's stores |
 | `PUT /stores/:store` | |
 | `GET/POST /organisations/:org/people` | |
@@ -82,7 +83,7 @@ Everything the screens do goes through this API, so another system (Munch, Aura,
 ### Reports and S.O.S
 | | |
 |---|---|
-| `GET /organisations/:org/sos?from&to&store` | Performance, shop condition, Quality Ratio status |
+| `GET /organisations/:org/sos?from&to&store` | Performance and shop condition per store, and `quality_ratio`: the raw checklist pass rate and stock condition rate with what each was counted from, `status: "formula_to_be_confirmed"`. Never one combined score until the formula is agreed |
 | `GET /stores/:store/report?from&to&checklist&format=csv` | The detailed report, JSON or CSV |
 
 ### Integration

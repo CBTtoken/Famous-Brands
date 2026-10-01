@@ -104,6 +104,8 @@ export type StorePerformance = {
   visits: number; visits_unconfirmed: number;
   items: number; items_open_issues: number; broken: number; stolen: number; worn: number; service_overdue: number;
   open_reorders: number; open_reorder_value_cents: number;
+  answers: number; answers_passed: number; checklist_pass_pct: number | null;
+  stock_condition_pct: number | null;
   repeat_offences: { label: string; template_name: string; periods: number }[];
   weekly: { week: string; expected: number; submitted: number }[];
 };
@@ -202,6 +204,12 @@ export async function sos(actor: Actor, orgId: string, range: ReturnType<typeof 
        from reorder_suggestions where store_id = $1 and status = 'open'`,
       [s.id],
     ))[0];
+    const ans = (await q<{ total: number; passed: number }>(
+      `select count(*)::int as total, count(*) filter (where not a.is_exception)::int as passed
+       from answers a join checklist_runs r on r.id = a.run_id
+       where r.store_id = $1 and a.received_at >= $2 and a.received_at < $3`,
+      [s.id, range.fromUtc, range.toUtc],
+    ))[0];
     const repeat = await q<{ label: string; template_name: string; periods: number }>(
       `select i.label, r.template_name, count(distinct r.period_key)::int as periods
        from answers a join run_items i on i.id = a.run_item_id join checklist_runs r on r.id = a.run_id
@@ -219,15 +227,31 @@ export async function sos(actor: Actor, orgId: string, range: ReturnType<typeof 
       visits: v.visits, visits_unconfirmed: v.unconfirmed,
       items: st.items, items_open_issues: st.open_issues, broken: st.broken, stolen: st.stolen, worn: st.worn, service_overdue: st.overdue,
       open_reorders: ro.n, open_reorder_value_cents: Number(ro.value),
+      answers: ans.total, answers_passed: ans.passed, checklist_pass_pct: rate(ans.passed, ans.total),
+      stock_condition_pct: rate(st.items - st.open_issues, st.items),
       repeat_offences: repeat,
       weekly: [...weekly.entries()].sort().map(([week, w]) => ({ week, ...w })),
     });
   }
+  const answers = out.reduce((a, s) => a + s.answers, 0);
+  const passed = out.reduce((a, s) => a + s.answers_passed, 0);
+  const items = out.reduce((a, s) => a + s.items, 0);
+  const fine = out.reduce((a, s) => a + s.items - s.items_open_issues, 0);
   return {
     range,
     stores: out,
-    // Deliberately no number. The handoff says the weighting must come from
-    // Dewald; until it does, the screen shows what will feed it, not a score.
-    quality_ratio: { status: "awaiting_formula" as const },
+    // Dewald, 1 October 2026: no formula yet. Show the two raw rates side by
+    // side, labelled "formula to be confirmed", and never combine them into
+    // one score, because any weighting would be invented.
+    quality_ratio: {
+      status: "formula_to_be_confirmed" as const,
+      checklist_pass_rate: { passed, answers, pct: rate(passed, answers) },
+      stock_condition_rate: { fine, items, pct: rate(fine, items), as_of: todayLocal() },
+    },
   };
+}
+
+/** A percentage to one decimal, or null when there is nothing to count. */
+function rate(part: number, whole: number): number | null {
+  return whole ? Math.round((part / whole) * 1000) / 10 : null;
 }

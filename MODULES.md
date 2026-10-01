@@ -18,7 +18,9 @@ Where each part of the system lives.
 | S.O.S and reports | `src/lib/services/reports.ts`, `src/lib/csv.ts` | `organisations/:org/sos`, `stores/:id/report` | `/sos`, `/reports/*` |
 | Integration | `src/lib/services/integration.ts`, `src/lib/core/events.ts` | `api-keys`, `events` | `/setup/integrations` |
 | Starter content | `src/lib/library/*`, `src/lib/services/library.ts` | `organisations/:org/library` | buttons under Setup |
+| Demo accounts | `src/lib/services/demo.ts` (built from the services above) | `platform/demo` | `/platform`, demo banner in `src/app/(app)/layout.tsx` |
+| House style check | `scripts/check-house-style.mjs` (from DigitalFlyer Growth) | | |
 | Schema and record locks | `db/migrations/*.sql` | | |
 | Time and periods | `src/lib/core/time.ts` | | |
 
-Tests: `tests/evaluate.test.ts` (rules), `tests/integration.test.ts` (every acceptance criterion at service level, against PostgreSQL), `tests/e2e/walkthrough.ts` (real browser at phone width, real HTTP), `tests/e2e/offline.ts` (signal lost and regained mid-checklist).
+Tests: `tests/evaluate.test.ts` (rules), `tests/integration.test.ts` (every acceptance criterion at service level, against PostgreSQL), `tests/e2e/walkthrough.ts` (real browser at phone width, real HTTP), `tests/e2e/offline.ts` (signal lost and regained mid-checklist), `tests/e2e/demo.ts` (the demo group made, used on a phone, and its critical alert delivered).

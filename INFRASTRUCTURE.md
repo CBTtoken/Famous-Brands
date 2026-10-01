@@ -1,10 +1,16 @@
 # INFRASTRUCTURE
 
-Read this before touching hosting, DNS or deployment. Written 1 October 2026, before the first deployment.
+Read this before touching hosting, DNS or deployment. Written 1 October 2026, before the first deployment, and updated the same day with Dewald's decisions (below).
 
 ## Where it runs
 
-**Temporary home: the HelpLift Xneelo Cloud VM, as a completely separate Coolify project.** Same direction as every new build in the portfolio (Xneelo Cloud + Coolify, not Vercel or hosted Supabase). Nothing is deployed yet: the steps below need Dewald, or a Coolify API token, to carry out.
+**Temporary home: the existing, empty "Famous Brands" project in Coolify, on the Xneelo Cloud VM that also runs HelpLift.** Same direction as every new build in the portfolio (Xneelo Cloud + Coolify, not Vercel or hosted Supabase). Nothing is deployed yet.
+
+### Decided by Dewald, 1 October 2026
+
+1. A standalone app with its own database and photo storage, in the existing **"Famous Brands"** Coolify project. Do not create another project.
+2. Live address **`sos-poc.digitalflyer.co.za`**. The A record already exists in Xneelo's DNS and points at the Coolify server (checked: it resolves to `154.65.106.166`, the same as `coolify.digitalflyer.co.za`). The address is borrowed, so it must never be written into the code: it lives only in `APP_URL` and the Coolify domain setting.
+3. Coolify's **Allowed IPs list is empty**. The API token is the security boundary, so treat it like a password: never in the repo, never pasted into a chat.
 
 - Server: Xneelo Cloud VM `154.65.106.166`, Ubuntu 24.04, 8 CPU, 16 GB, Coolify. Dashboard `https://coolify.digitalflyer.co.za`. See HelpLift's `INFRASTRUCTURE.md`.
 - The same box runs HelpLift production **and HelpLift's self-hosted Supabase with real data**. Everything below is designed so this app cannot touch either.
@@ -26,16 +32,16 @@ Note: on 1 October 2026 that section existed only in the local copy of HelpLift 
 
 The Claude Code cloud session that built this app cannot reach the server over SSH, and does not need to. Everything is done through Coolify's API at `https://coolify.digitalflyer.co.za/api/v1`, the same way HelpLift was deployed (env vars by `PATCH /applications/{uuid}/envs/bulk`, deploy by `POST /deploy`):
 
-1. Read-only first: list servers and existing resources, and check the server's free CPU, memory and disk. Stop and report if there is not clear headroom.
-2. Create the project, the PostgreSQL resource and the application, set limits, env vars, domain and volume, deploy.
+1. Read-only first: list servers and existing resources, find the existing "Famous Brands" project, and check the server's free CPU, memory and disk. Stop and report if there is not clear headroom.
+2. In that project, create the PostgreSQL resource and the application, set limits, env vars, domain and volume, deploy.
 3. Verify `/api/health` on the new domain.
-4. Never call an endpoint that touches a resource outside the "SOS Famous Brands" project.
+4. Never call an endpoint that touches a resource outside the "Famous Brands" project.
 
-Needed from Dewald: a Coolify API token (Keys & Tokens, scoped as narrowly as Coolify allows), Coolify's GitHub App given access to `CBTtoken/Famous-Brands`, the DNS record below, and `coolify.digitalflyer.co.za` added to the build environment's allowed network hosts.
+**The token, and where each session finds it.** Sessions on Dewald's Windows machine read it from the `COOLIFY_TOKEN` user variable (`setx`). A Claude Code cloud session cannot see that variable: it runs in its own container, where the token is a saved credential called **FamousBrands** in the cloud environment's settings (environment menu, Edit), sent automatically on every request to `coolify.digitalflyer.co.za`. On 1 October 2026 that saved credential was rejected by Coolify ("Unauthenticated"), so it must hold the same token as `COOLIFY_TOKEN`. The repository is public, so `CBTtoken/Famous-Brands` needs no GitHub App on Coolify's side to build.
 
 ## Isolation from HelpLift, the rules
 
-1. **Its own Coolify Project** ("SOS Famous Brands"), not inside the HelpLift project. Own environment variables, own deploy history.
+1. **Its own Coolify Project** (the existing "Famous Brands" project), not inside the HelpLift project. Own environment variables, own deploy history.
 2. **Its own PostgreSQL resource** (Coolify, Databases, PostgreSQL 16). Not HelpLift's Supabase Postgres, not a second database inside it. Own container, own volume, own password. Not exposed publicly ("Make it publicly available" stays off); the app reaches it on Coolify's internal network.
 3. **Hard resource limits** on both containers (Configuration, Resource Limits; the default is unlimited, so this is mandatory):
    - App: 1 CPU, max memory 768 MB.
@@ -47,22 +53,16 @@ Needed from Dewald: a Coolify API token (Keys & Tokens, scoped as narrowly as Co
 
 ## The temporary address
 
-Camera, location and push alerts all need **HTTPS**. Coolify's free `sslip.io` addresses do not get a Let's Encrypt certificate (Coolify's own docs), so they cannot be used for this app.
+`sos-poc.digitalflyer.co.za`, already in Xneelo's DNS (A record to `154.65.106.166`). Camera, location and push alerts all need **HTTPS**; Coolify issues the certificate itself once the domain is set on the application, the same way `coolify.digitalflyer.co.za` was done. Coolify's free `sslip.io` addresses do not get a certificate, so they cannot be used for this app.
 
-**Recommended:** one A record in Xneelo's DNS dashboard (where every DigitalFlyer domain lives, Cloudflare is not involved):
-
-```
-sos-poc.digitalflyer.co.za   A   154.65.106.166
-```
-
-Coolify then issues the certificate itself, the same way `coolify.digitalflyer.co.za` was done. "Hidden" is handled by the app: every page needs a sign-in, `robots.txt` disallows everything, and every response carries `X-Robots-Tag: noindex`. Any name works; it only has to be decided.
+"Hidden" is handled by the app: every page needs a sign-in, `robots.txt` disallows everything, and every response carries `X-Robots-Tag: noindex`.
 
 ## Deploying, step by step (first time)
 
-1. Coolify, Projects, **New Project** "SOS Famous Brands".
+1. Coolify, Projects, open the existing **"Famous Brands"** project.
 2. In it, **New Resource, PostgreSQL 16**. Set Resource Limits (above). Under Backups, add a daily schedule; when an S3 target exists, add it there too.
-3. **New Resource, Application**, from the GitHub repo `CBTtoken/Famous-Brands`, build pack **Dockerfile**, port `3000`. Branch `main` once the work is merged; until then, `claude/confident-heisenberg-c70ifu`.
-4. Domain: `https://sos-poc.digitalflyer.co.za` (after the DNS record exists).
+3. **New Resource, Application**, from the GitHub repo `CBTtoken/Famous-Brands`, build pack **Dockerfile**, port `3000`. Branch `main` once the work is merged; until then, `claude/famous-brands-sos-poc-9a6ipo` (which carries everything on `claude/confident-heisenberg-c70ifu` plus the 1 October decisions).
+4. Domain: `https://sos-poc.digitalflyer.co.za`.
 5. Storage: add a **persistent volume** mounted at `/data`.
 6. Environment variables (generate push keys with `npm run vapid` on any machine):
 
@@ -96,14 +96,18 @@ Designed as a lift-and-shift: nothing about the address or the box is in the cod
 2. `pg_dump` the Postgres resource and restore it (same Postgres major version).
 3. Copy the `/data/photos` volume (or switch to `STORAGE_DRIVER=s3` and upload the folder to the bucket with the same keys).
 4. Point the DNS record at the new box. Push subscriptions keep working as long as the VAPID keys and the domain stay the same; a new domain means each person turns alerts on again under Settings.
-5. Delete the Coolify project on the HelpLift box. HelpLift is untouched throughout.
+5. Delete this app's resources from the "Famous Brands" Coolify project on the HelpLift box. HelpLift is untouched throughout.
 
 ## Photo storage at volume
 
 The POC stores photos on the app's volume. A phone photo is shrunk on the phone to about 250 KB before upload, so 10 photos a day across 100 shops is about 90 GB a year. Before a wide rollout, move to an S3-compatible bucket (`STORAGE_DRIVER=s3`). Xneelo has no object storage product that we could find; South African options include Z1 Storage. Cloudflare R2 is cheap but stores data outside South Africa, which matters under POPIA for staff photos and locations.
 
+## Demo accounts after the first deploy
+
+The pilot shop and the Famous Brands sign-off contact are not known yet, so the POC is shown with demo accounts. After signing in as the platform admin, open **Shop groups** and use **Demo accounts**: choose one shared demo password (at least 12 characters) and the app makes a "DEMO shop group (not a real franchisee)" with one demo shop, four demo sign-ins (`admin@`, `area.manager@`, `shop.manager@`, `supervisor@demo.sos.invalid`), a ready test checklist, the client's 46 tasks as drafts and the smalls item list. A banner says "Demo" on every screen inside it. It creates no visits, answers or figures.
+
 ## Not set up yet
 
-- The deployment itself (needs Dewald or a Coolify API token, and the DNS record).
+- The deployment itself (needs a Coolify token that Coolify accepts, in this session's FamousBrands credential).
 - Off-box backups of the database and photos.
 - Email: there is none. Alerts are push only for now.

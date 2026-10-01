@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "check:style": "node scripts/check-house-style.mjs",
     "db:migrate": "node scripts/migrate.mjs",
     "db:bootstrap": "node scripts/bootstrap-admin.mjs",
     "test": "vitest run",

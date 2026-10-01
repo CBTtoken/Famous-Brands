@@ -291,17 +291,29 @@ describe("Library and S.O.S", () => {
     expect(items.filter((i) => i.range_unconfirmed).every((i) => i.min_value === null)).toBe(true);
   });
 
-  it("S.O.S counts from records and refuses to invent a quality ratio", async () => {
+  it("S.O.S counts from records and shows the raw rates, never a combined score", async () => {
     const s = await sos(areaMgr, orgId, parseRange());
     const a = s.stores.find((x) => x.store_name === "Store A")!;
     expect(a.submitted).toBe(1);
     expect(a.exceptions).toBe(1);
     expect(a.broken).toBe(1);
     expect(a.visits_unconfirmed).toBe(1);
-    expect(s.quality_ratio).toEqual({ status: "awaiting_formula" });
+    // Counted straight from the tables, not from the service's own sums.
+    const ans = (await q<{ total: number; passed: number }>(
+      `select count(*)::int as total, count(*) filter (where not is_exception)::int as passed
+       from answers a join checklist_runs r on r.id = a.run_id where r.store_id = $1`, [storeA]))[0];
+    expect(ans.total).toBeGreaterThan(ans.passed);
+    expect(a.answers).toBe(ans.total);
+    expect(a.answers_passed).toBe(ans.passed);
+    expect(a.checklist_pass_pct).toBe(Math.round((ans.passed / ans.total) * 1000) / 10);
+    expect(a.stock_condition_pct).toBe(Math.round(((a.items - a.items_open_issues) / a.items) * 1000) / 10);
+    expect(s.quality_ratio.status).toBe("formula_to_be_confirmed");
+    expect(Object.keys(s.quality_ratio)).not.toContain("score");
+    expect(s.quality_ratio.checklist_pass_rate.answers).toBe(s.stores.reduce((n, x) => n + x.answers, 0));
     // Supervisor B's store shows nothing done and no invented figures.
     const b = s.stores.find((x) => x.store_name === "Store B")!;
     expect(b.submitted).toBe(0);
+    expect(b.checklist_pass_pct).toBeNull();
   });
 });
 
@@ -312,6 +324,27 @@ describe("Photos", () => {
     const a = await uploadPhoto(supA, { storeId: storeA, clientId: id, bytes: JPEG });
     const b = await uploadPhoto(supA, { storeId: storeA, clientId: id, bytes: JPEG });
     expect(b).toEqual({ id: a.id, duplicate: true });
+  });
+  it("a photo that does not read back byte for byte is refused, retried, removed and never recorded", async () => {
+    const { photoStore } = await import("@/lib/storage");
+    const ps = photoStore();
+    const realGet = ps.get.bind(ps);
+    const putKeys: string[] = [];
+    const realPut = ps.put.bind(ps);
+    let reads = 0;
+    ps.put = async (key, body, type) => { putKeys.push(key); return realPut(key, body, type); };
+    // Same length, one byte changed: a size check would pass this.
+    ps.get = async (key) => { reads++; const b = Buffer.from(await realGet(key)); b[b.length - 1] ^= 0xff; return b; };
+    const before = (await one<{ n: number }>(`select count(*)::int as n from photos`))!.n;
+    try {
+      await expect(uploadPhoto(supA, { storeId: storeA, clientId: randomUUID(), bytes: JPEG })).rejects.toThrow(/storage check failed after 3 attempts/);
+    } finally {
+      ps.get = realGet;
+      ps.put = realPut;
+    }
+    expect(reads).toBe(3);
+    expect((await one<{ n: number }>(`select count(*)::int as n from photos`))!.n).toBe(before);
+    await expect(ps.size(putKeys[0])).rejects.toThrow();
   });
 });
 
@@ -357,5 +390,58 @@ describe("Review fixes", () => {
     const csv = reportCsv(r);
     expect(csv).toMatch(/,-26\.26/);
     expect(csv).not.toMatch(/'-26/);
+  });
+});
+
+describe("Demo accounts", () => {
+  it("only a platform admin can make the demo group, and only once", async () => {
+    const { createDemoGroup } = await import("@/lib/services/demo");
+    await expect(createDemoGroup(admin, "demo-password-123")).rejects.toMatchObject({ status: 403 });
+    await expect(createDemoGroup(platform, "short")).rejects.toMatchObject({ status: 400 });
+    const r = await createDemoGroup(platform, "demo-password-123");
+    expect(r.logins).toHaveLength(4);
+    expect(r.items).toBeGreaterThan(0);
+    await expect(createDemoGroup(platform, "demo-password-123")).rejects.toMatchObject({ status: 409 });
+    const org = await one<{ name: string; is_demo: boolean }>(`select name, is_demo from organisations where id = $1`, [r.orgId]);
+    expect(org).toMatchObject({ is_demo: true });
+    expect(org!.name).toMatch(/^DEMO /);
+  });
+
+  it("every demo name says DEMO, and nothing is recorded until somebody does it", async () => {
+    const { demoGroup } = await import("@/lib/services/demo");
+    const g = (await demoGroup())!;
+    const people = await listPeople(platform, g.id);
+    expect(people.map((p) => p.role).sort()).toEqual(["admin", "area_manager", "shop_manager", "supervisor"]);
+    expect(people.every((p) => p.full_name.startsWith("DEMO ") && p.email!.endsWith(".invalid") && !p.must_change_password)).toBe(true);
+    const counts = await one<{ visits: number; runs: number; reports: number; reorders: number }>(
+      `select (select count(*)::int from visits v join stores s on s.id = v.store_id where s.org_id = $1) as visits,
+         (select count(*)::int from checklist_runs r join stores s on s.id = r.store_id where s.org_id = $1) as runs,
+         (select count(*)::int from condition_reports where org_id = $1) as reports,
+         (select count(*)::int from reorder_suggestions where org_id = $1) as reorders`, [g.id]);
+    expect(counts).toEqual({ visits: 0, runs: 0, reports: 0, reorders: 0 });
+    const s = await sos(platform, g.id, parseRange());
+    expect(s.quality_ratio.checklist_pass_rate.pct).toBeNull();
+    expect(s.quality_ratio.stock_condition_rate.pct).toBe(100);
+  });
+
+  it("the demo supervisor signs in with the shared password and is held to the supervisor role", async () => {
+    const { demoGroup } = await import("@/lib/services/demo");
+    const { verifyPassword } = await import("@/lib/core/auth");
+    const g = (await demoGroup())!;
+    const u = (await one<{ id: string; password_hash: string }>(`select id, password_hash from users where email = 'supervisor@demo.sos.invalid'`))!;
+    expect(await verifyPassword(u.password_hash, "demo-password-123")).toBe(true);
+    const sup = await actorFor(u.id);
+    await expect(sos(sup, g.id, parseRange())).rejects.toMatchObject({ status: 403 });
+    await expect(listPeople(sup, g.id)).rejects.toMatchObject({ status: 403 });
+    // And sees nothing of any real group.
+    await expect(requireStore(sup, storeA, "stock.view")).rejects.toMatchObject({ status: 404 });
+    // The ready checklist is published and has a photo, a tick, free text and a critical item.
+    const t = await one<{ status: string; types: string[]; tiers: string[] }>(
+      `select t.status, array_agg(distinct i.answer_type::text) as types, array_agg(distinct coalesce(i.tier::text, '')) as tiers
+       from checklist_templates t join template_items i on i.template_id = t.id
+       where t.org_id = $1 and t.name like 'DEMO:%' group by t.status`, [g.id]);
+    expect(t!.status).toBe("published");
+    expect(t!.types).toEqual(expect.arrayContaining(["photo", "tick", "text"]));
+    expect(t!.tiers).toContain("critical");
   });
 });

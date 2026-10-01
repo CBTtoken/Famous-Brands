@@ -6,7 +6,7 @@ import type { Actor } from "../core/auth";
 import { actorUserId, requireStore } from "../core/authz";
 import { badRequest, notFound } from "../core/errors";
 import { recordEvent } from "../core/events";
-import { photoStore } from "../storage";
+import { photoStore, putVerified } from "../storage";
 
 /** Work out what an upload really is from its first bytes, never from its name. */
 export function sniffImage(b: Buffer): { mime: string; ext: string; width: number | null; height: number | null } | null {
@@ -69,11 +69,8 @@ export async function uploadPhoto(actor: Actor, u: PhotoUpload) {
   const sha256 = createHash("sha256").update(u.bytes).digest("hex");
   const now = new Date();
   const key = `${store.org_id}/${store.id}/${now.getUTCFullYear()}/${String(now.getUTCMonth() + 1).padStart(2, "0")}/${randomUUID()}.${kind.ext}`;
-  const ps = photoStore();
-  await ps.put(key, u.bytes, kind.mime);
-  // Guard the door: confirm the stored object is the size we sent.
-  const landed = await ps.size(key);
-  if (landed !== u.bytes.length) throw new Error(`Photo storage check failed: sent ${u.bytes.length} bytes, stored ${landed}`);
+  // Guard the door: the stored bytes must be the bytes sent, by digest.
+  await putVerified(key, u.bytes, kind.mime);
   const capturedAt = u.capturedAt && !Number.isNaN(Date.parse(u.capturedAt)) ? u.capturedAt : null;
   const row = await one<{ id: string }>(
     `insert into photos (org_id, store_id, client_id, storage_key, sha256, bytes, mime, width, height, lat, lng, accuracy_m, client_captured_at, uploaded_by)

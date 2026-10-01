@@ -8,13 +8,14 @@ Read at the start of every session in this repository. Keeps work consistent acr
 
 - **Module 1, Store Supervisor Checklist.** Check in with a geo-timestamp, work checklists one task per screen (tick, number with range, photo, date, time, note), tiers drive push alerts, records cannot be edited after submission.
 - **Module 2, Stock and Shop Condition.** Every physical item a shop needs (never food), its condition (fine, broken, stolen, worn), reorder suggestions to the supplier the owner chose, the standard starter list for a new shop.
-- **S.O.S layer.** Performance, Report to Famous Brands, Quality Ratio (placeholder until the formula is agreed).
+- **S.O.S layer.** Performance, Report to Famous Brands, Quality Ratio (the two raw rates side by side, labelled "formula to be confirmed", until the formula is agreed).
 
 The brief is `docs/source/Handoff-FamousBrands-SOS-POC.md`. The client's own task list and reasoning are in `docs/source/Store_Supervision_*.docx`. Supplier research is `docs/source/Supplier-Findings-v1.md`. Read `WHERE-WE-ARE.md` before starting anything.
 
 ## Stack
 
 - Next.js 16 (App Router), React 19, TypeScript, Tailwind 4. Same versions as HelpLift.
+- A standalone app with its own database and photo storage, not inside the DigitalFlyer Growth shell (Dewald, 1 October 2026). Reuse Growth's tools and mechanisms where they fit, and say what was reused.
 - PostgreSQL 16 through `pg`. **No Supabase, no Vercel.** Hosted on Xneelo Cloud + Coolify (see `INFRASTRUCTURE.md`).
 - Own session auth (argon2id, hashed session tokens, httpOnly cookie). API keys for other systems.
 - Web Push (VAPID, `web-push`) for alerts. Every delivery attempt is recorded.
@@ -36,14 +37,14 @@ The brief is `docs/source/Handoff-FamousBrands-SOS-POC.md`. The client's own tas
 - Read back phone numbers and email addresses before saving them.
 - Save state at every step. A checklist and a shop walk resume exactly where they stopped.
 - Every operation reports what it actually did, including what it skipped.
-- **No fabricated proof, no placeholder data, no invented numbers.** Unconfirmed ranges stay empty and marked. The Quality Ratio shows no score until Dewald gives the formula.
+- **No fabricated proof, no placeholder data, no invented numbers.** Unconfirmed ranges stay empty and marked. The Quality Ratio shows the raw checklist pass rate and stock condition rate, never a combined score, until Dewald gives the formula.
 - Short sentences, professional and kind, **no em dashes** in any copy.
 
 ## Verification
 
-- `npm run lint`, `npx tsc --noEmit`, `npm run build` must pass.
+- `npm run lint`, `npx tsc --noEmit`, `npm run check:style` (no em dashes in readable text, ported from DigitalFlyer Growth), `npm run build` must pass.
 - `npm test` runs unit and integration tests against a real PostgreSQL (`sos_test`). It resets that database.
-- `tests/e2e/walkthrough.ts` walks the acceptance criteria in a real browser against a running server. Show the proof, do not just claim success.
+- `tests/e2e/walkthrough.ts` walks the acceptance criteria in a real browser against a running server, then `tests/e2e/offline.ts` and `tests/e2e/demo.ts` against the same server. Show the proof, do not just claim success.
 
 ## Guardrails
 
