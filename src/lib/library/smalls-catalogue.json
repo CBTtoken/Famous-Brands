@@ -1,0 +1,856 @@
+{
+ "source": "Debonairs Smalls standard list order form, October 2025, site Ithonka. Prices are Catercare Equipment unit selling prices excluding VAT.",
+ "supplier": "Catercare Equipment",
+ "items": [
+  {
+   "code": "WFS0001",
+   "name": "Wet floor sign",
+   "category": "Health and safety",
+   "unit_price_cents": 12500,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "FC20WT",
+   "name": "Water container 20 L with taps",
+   "category": "Hygiene and cleaning",
+   "unit_price_cents": 8900,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Grill brush fine",
+   "category": "Hygiene and cleaning",
+   "unit_price_cents": 65000,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "CADAC-20",
+   "name": "Grill brush coarse",
+   "category": "Hygiene and cleaning",
+   "unit_price_cents": 12000,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "SKU81451294",
+   "name": "Broom soft",
+   "category": "Hygiene and cleaning",
+   "unit_price_cents": 6300,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "10482714",
+   "name": "Nail brush",
+   "category": "Hygiene and cleaning",
+   "unit_price_cents": 1600,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "555607",
+   "name": "Deck scrubber",
+   "category": "Hygiene and cleaning",
+   "unit_price_cents": 8900,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "PBW-2030",
+   "name": "Double bucket trolley and wringer complete",
+   "category": "Hygiene and cleaning",
+   "unit_price_cents": 194350,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "MHA0400",
+   "name": "Mop round 300gr steel handle",
+   "category": "Hygiene and cleaning",
+   "unit_price_cents": 13900,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "MHA1400",
+   "name": "Mop round 300gr head only",
+   "category": "Hygiene and cleaning",
+   "unit_price_cents": 3800,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "PPB-0087",
+   "name": "Rectangular pedal bin 87 L (offered 90 L)",
+   "category": "Hygiene and cleaning",
+   "unit_price_cents": 87000,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "DB-0240-BK-OD-B",
+   "name": "Mobile refuse bin 240 L, charcoal (general waste)",
+   "category": "Hygiene and cleaning",
+   "unit_price_cents": 108000,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "ETI-231-217",
+   "name": "Thermometer Thermapen",
+   "category": "Health and safety",
+   "unit_price_cents": 245000,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "EKT-0001",
+   "name": "Electronic kitchen timer",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 13500,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "SSS0001",
+   "name": "Stainless steel salt shaker with handle",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 4800,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 4,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "ARP-0600",
+   "name": "Rolling pin aluminium, 380mm",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 69400,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "DSP-0150",
+   "name": "Dough cutter plastic handle",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 9500,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "PRC-0001",
+   "name": "Pizza rocker blade plastic handles",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 16300,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "SRP0001",
+   "name": "Spike roller plastic, 120 x 206mm",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 5500,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 3,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "CBG-0500",
+   "name": "Cutting board PE 500 x 350 x 10mm green (size differs 500 x 350 x 10mm)",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 15000,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "CBR-0500",
+   "name": "Cutting board PE 500 x 350 x 10mm red (size differs 500 x 350 x 10mm)",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 15000,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "CBN-0500",
+   "name": "Cutting board PE 500x380x13mm brown",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 15000,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "CBW-0500",
+   "name": "Cutting board PE 500x380x13mm white",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 15000,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "CBS0006",
+   "name": "Cutting board stand, chrome",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 39800,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "BBS-0270-RE",
+   "name": "Silicone basting brush red (35mm)",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 6200,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 4,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "SSP-0250",
+   "name": "Spatula silicon, red plastic handle, 250mm",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 4600,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "PCS-0003",
+   "name": "Portion server solid, ivory 89ml",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 5732,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": "Order form: on hold, stock at FB distribution centre",
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Portion server solid, red 89ml",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 5732,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": "Order form: on hold, stock at FB distribution centre",
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Portion server solid, ivory 59ml",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 5500,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": "Order form: on hold, stock at FB distribution centre",
+   "service_interval_days": null
+  },
+  {
+   "code": "PCS-0002",
+   "name": "Portion server solid, red 59ml",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 5500,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": "Order form: on hold, stock at FB distribution centre",
+   "service_interval_days": null
+  },
+  {
+   "code": "PCS-0001",
+   "name": "Portion server solid, yellow 30ml",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 5100,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": "Order form: on hold, stock at FB distribution centre",
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Pizza cutter black plastic handle",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 7100,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Pizza cutter green plastic handle",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 7100,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Pizza cutter, red plastic handle",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 7100,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Pizza cutter, yellow plastic handle",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 7100,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "KCO-0200",
+   "name": "Knife Grunter, cooks 200mm",
+   "category": "Cutlery and knives",
+   "unit_price_cents": 22100,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "HTP0200",
+   "name": "H/burger turner perforated, PVC, 200mm",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 8000,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 4,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Pizza shovel short handle stainless steel",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 48700,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "DT-W",
+   "name": "Dough tray white",
+   "category": "Plastics, dough trays and trolleys",
+   "unit_price_cents": 47400,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 60,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "DT-R",
+   "name": "Dough tray red",
+   "category": "Plastics, dough trays and trolleys",
+   "unit_price_cents": 47400,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 8,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "DT-G",
+   "name": "Dough tray green",
+   "category": "Plastics, dough trays and trolleys",
+   "unit_price_cents": 47400,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 4,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "DT-Y",
+   "name": "Dough tray yellow",
+   "category": "Plastics, dough trays and trolleys",
+   "unit_price_cents": 47400,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 3,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Dough tray lid white",
+   "category": "Plastics, dough trays and trolleys",
+   "unit_price_cents": null,
+   "price_source": null,
+   "standard_qty": 20,
+   "notes": "Order form: price included with the matching dough tray",
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Dough tray lid red",
+   "category": "Plastics, dough trays and trolleys",
+   "unit_price_cents": null,
+   "price_source": null,
+   "standard_qty": 8,
+   "notes": "Order form: price included with the matching dough tray",
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Dough tray lid green",
+   "category": "Plastics, dough trays and trolleys",
+   "unit_price_cents": null,
+   "price_source": null,
+   "standard_qty": 4,
+   "notes": "Order form: price included with the matching dough tray",
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Dough tray lid yellow",
+   "category": "Plastics, dough trays and trolleys",
+   "unit_price_cents": null,
+   "price_source": null,
+   "standard_qty": 3,
+   "notes": "Order form: price included with the matching dough tray",
+   "service_interval_days": null
+  },
+  {
+   "code": "PGS0195",
+   "name": "Deep pan gripper",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 7200,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Deep pan 19cm",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 5000,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 10,
+   "notes": "Order form: on hold, stock at FB distribution centre",
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Deep pan 30cm Debonairs, deviation 325mm",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 9300,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 10,
+   "notes": "Order form: on hold, stock at FB distribution centre",
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Dough tray dolley",
+   "category": "Plastics, dough trays and trolleys",
+   "unit_price_cents": 216000,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 4,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "WS-30",
+   "name": "Scale 30kg ws-30 (Adams)",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 198000,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "PCPS0380",
+   "name": "Pizza screen, 380mm per pack of 10",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 98800,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": "Order form: on hold, stock at FB distribution centre",
+   "service_interval_days": null
+  },
+  {
+   "code": "330",
+   "name": "Pizza screen, 330mm per pack of 10",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 70700,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": "Order form: on hold, stock at FB distribution centre",
+   "service_interval_days": null
+  },
+  {
+   "code": "300",
+   "name": "Pizza screen 300mm per pack of 10",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 61130,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 3,
+   "notes": "Order form: on hold, stock at FB distribution centre",
+   "service_interval_days": null
+  },
+  {
+   "code": "230",
+   "name": "Pizza screen 230mm per pack of 10",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 40610,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 7,
+   "notes": "Order form: on hold, stock at FB distribution centre",
+   "service_interval_days": null
+  },
+  {
+   "code": "190",
+   "name": "Pizza screen 190mm per pack of 10",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 28620,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 3,
+   "notes": "Order form: on hold, stock at FB distribution centre",
+   "service_interval_days": null
+  },
+  {
+   "code": "150",
+   "name": "Pizza screen 150mm per pack of 10",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 20730,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 4,
+   "notes": "Order form: on hold, stock at FB distribution centre",
+   "service_interval_days": null
+  },
+  {
+   "code": "GN1/2-150-PC (INH4150-C)",
+   "name": "Food pan 1/2 x 6 polycarb",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 33100,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 10,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "GN1/3-150-PC-(INT5063-C)",
+   "name": "Food pan 1/3 x 6 polycarb",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 25000,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 12,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "GN1/6-150-PC (INTS4150-C)",
+   "name": "Food pan 1/6 x 6 polycarb",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 17500,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 12,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "GN1/2-LID-PC (INH4004-C)",
+   "name": "GN 1/2 lid clear polycarb",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 14300,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 12,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "GN1/3-150-PC (INT4004-C)",
+   "name": "GN 1/3 lid clear polycarb",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 10600,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 12,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "GN1/6-150-PC (INS4004-C)",
+   "name": "GN 1/6 lid clear polycarb",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 8400,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 12,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Insert holder 6 x sixth insert",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 212500,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "CFP0150",
+   "name": "Camwear Coldfest freezer pan sixth size 150mm",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 66500,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 3,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Topping cup large Debonairs",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 3900,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 3,
+   "notes": "Order form: on hold, stock at head office",
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Topping cup cheese large Debonairs",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 3900,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 3,
+   "notes": "Order form: on hold, stock at head office",
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Topping cup regular Debonairs",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 3800,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 3,
+   "notes": "Order form: on hold, stock at head office",
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Topping cup cheese regular Debonairs",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 3800,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 3,
+   "notes": "Order form: on hold, stock at head office",
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Topping cup real deal Debonairs",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 3600,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 3,
+   "notes": "Order form: on hold, stock at head office",
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Topping cup real deal Debonairs cheese",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 3300,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 3,
+   "notes": "Order form: on hold, stock at head office",
+   "service_interval_days": null
+  },
+  {
+   "code": "BF-001",
+   "name": "Bill folder Debonairs",
+   "category": "Front of house",
+   "unit_price_cents": 22000,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 6,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "IBP0085",
+   "name": "Ingredient bin 85 L (white)",
+   "category": "Plastics, dough trays and trolleys",
+   "unit_price_cents": 56200,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Ingredient bin mobile dolley (metal)",
+   "category": "Plastics, dough trays and trolleys",
+   "unit_price_cents": 53200,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "JS-K002",
+   "name": "Stainless steel table fork",
+   "category": "Cutlery and knives",
+   "unit_price_cents": 500,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 12,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "JS-K001",
+   "name": "Stainless steel knife",
+   "category": "Cutlery and knives",
+   "unit_price_cents": 1100,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 12,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "JS-K003",
+   "name": "Stainless steel table spoon",
+   "category": "Cutlery and knives",
+   "unit_price_cents": 500,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 12,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "JS-K004",
+   "name": "Stainless steel teaspoon",
+   "category": "Cutlery and knives",
+   "unit_price_cents": 300,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 12,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "KPA-0100",
+   "name": "Paring knife 100mm",
+   "category": "Cutlery and knives",
+   "unit_price_cents": 7600,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": null,
+   "name": "Sub loaf trolley",
+   "category": "Plastics, dough trays and trolleys",
+   "unit_price_cents": 460000,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 3,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "COT-0001",
+   "name": "Can opener table mounted",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 118900,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "CLS0260",
+   "name": "Colander 260mm",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 9100,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "TTR3314",
+   "name": "Service tray, medium",
+   "category": "Front of house",
+   "unit_price_cents": 24400,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 3,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "MJP-2000",
+   "name": "2 L plastic jug",
+   "category": "Kitchen smallwares",
+   "unit_price_cents": 11900,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 1,
+   "notes": null,
+   "service_interval_days": null
+  },
+  {
+   "code": "9603ST",
+   "name": "Bucket 12 L",
+   "category": "Hygiene and cleaning",
+   "unit_price_cents": 5100,
+   "price_source": "Catercare Equipment order form, October 2025 (Ithonka)",
+   "standard_qty": 2,
+   "notes": null,
+   "service_interval_days": null
+  }
+ ]
+}
