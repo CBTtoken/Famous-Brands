@@ -21,4 +21,4 @@ Where each part of the system lives.
 | Schema and record locks | `db/migrations/*.sql` | | |
 | Time and periods | `src/lib/core/time.ts` | | |
 
-Tests: `tests/evaluate.test.ts` (rules), `tests/integration.test.ts` (every acceptance criterion at service level, against PostgreSQL), `tests/e2e/walkthrough.ts` (real browser at phone width, real HTTP).
+Tests: `tests/evaluate.test.ts` (rules), `tests/integration.test.ts` (every acceptance criterion at service level, against PostgreSQL), `tests/e2e/walkthrough.ts` (real browser at phone width, real HTTP), `tests/e2e/offline.ts` (signal lost and regained mid-checklist).

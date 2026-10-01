@@ -59,9 +59,13 @@ type QueueRow = {
  * device registered is marked "no_device", never "sent".
  */
 export async function processNotificationQueue(limit = 50) {
+  // Claim rows by marking them "sending" in the same statement, so a second
+  // sender running at the same moment cannot pick them up. A claim left by a
+  // crashed sender is released after two minutes.
   const rows = await q<QueueRow>(
-    `update notifications n set attempts = n.attempts + 1
-     from (select id from notifications where status = 'queued' and attempts < 5
+    `update notifications n set attempts = n.attempts + 1, status = 'sending', claimed_at = now()
+     from (select id from notifications
+           where attempts < 5 and (status = 'queued' or (status = 'sending' and claimed_at < now() - interval '2 minutes'))
            order by created_at limit $1 for update skip locked) pick,
           alerts a left join stores s on s.id = a.store_id
      where n.id = pick.id and a.id = n.alert_id

@@ -159,8 +159,8 @@ async function main() {
     const r = await supHttp.call(m, path, body);
     check(r.status === want, `supervisor ${m} ${path.replace(org, ":org").replace(sA, ":storeA").replace(sB, ":storeB")} refused with ${want}`);
   }
-  const page403 = await p.goto(`${BASE}/setup`);
-  check(page403 && page403.status() >= 400, `supervisor opening /setup in the browser is refused (${page403?.status()})`);
+  await p.goto(`${BASE}/setup`);
+  check(await p.getByText("Setup is for admins").count() === 1 && await p.getByText("1. Stores").count() === 0, "supervisor opening /setup in the browser sees only \"Setup is for admins\"");
   const cross = await fetch(`${BASE}/api/v1/organisations/${org}/people`, { method: "POST", headers: { cookie: admin.cookie, origin: "https://evil.example", "content-type": "application/json" }, body: "{}" });
   check(cross.status === 403, "a cross-site request with a valid admin cookie is blocked");
 

@@ -53,6 +53,9 @@ Coolify then issues the certificate itself, the same way `coolify.digitalflyer.c
    | `VAPID_PRIVATE_KEY` | from `npm run vapid` |
    | `VAPID_SUBJECT` | `mailto:info@digitalflyer.co.za` |
    | `CRON_SECRET` | a long random string |
+   | `TRUST_PROXY` | `true` (the app sits behind Coolify's Traefik) |
+   | `PROXY_HOPS` | `1` (only Traefik in front; if a CDN is ever added in front, this must change) |
+   | `SECURE_COOKIES` | leave unset (on in production) |
    | `BOOTSTRAP_ADMIN_NAME` / `_EMAIL` / `_PASSWORD` / `BOOTSTRAP_ORG_NAME` | first run only, remove afterwards |
 
 7. Resource Limits on the app (above). Deploy.

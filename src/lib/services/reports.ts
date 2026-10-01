@@ -123,9 +123,14 @@ export async function sos(actor: Actor, orgId: string, range: ReturnType<typeof 
   const out: StorePerformance[] = [];
 
   for (const s of stores.filter((x) => x.active || storeId)) {
-    const templates = await q<{ id: string; cadence: Cadence; due_by: string | null; created_at: Date }>(
-      `select t.id, t.cadence, to_char(t.due_by, 'HH24:MI') as due_by, t.created_at from checklist_templates t
-       where t.org_id = $1 and t.status = 'published' and t.cadence <> 'as_needed'
+    // Due from the day a checklist was first put in use (and not before the
+    // store existed), until it was retired. Retired checklists keep their
+    // past periods. Nothing after today is ever counted.
+    const templates = await q<{ id: string; cadence: Cadence; due_by: string | null; published_at: Date; retired_at: Date | null; status: string }>(
+      `select t.id, t.cadence, to_char(t.due_by, 'HH24:MI') as due_by,
+         greatest(t.published_at, s.created_at) as published_at, t.retired_at, t.status
+       from checklist_templates t join stores s on s.id = $2
+       where t.org_id = $1 and t.published_at is not null and t.status in ('published', 'retired') and t.cadence <> 'as_needed'
          and (not exists (select 1 from template_stores ts where ts.template_id = t.id)
               or exists (select 1 from template_stores ts where ts.template_id = t.id and ts.store_id = $2))`,
       [orgId, s.id],
@@ -138,11 +143,17 @@ export async function sos(actor: Actor, orgId: string, range: ReturnType<typeof 
     const runByKey = new Map(runs.map((r) => [`${r.template_id}|${r.period_key}`, r]));
     let expected = 0, submitted = 0, onTime = 0, inProgress = 0, missed = 0;
     const weekly = new Map<string, { expected: number; submitted: number }>();
+    const today = nowLocal.date;
     for (const t of templates) {
-      const startDate = localParts(t.created_at).date > range.from ? localParts(t.created_at).date : range.from;
-      if (startDate > range.to) continue;
+      const startDate = localParts(t.published_at).date > range.from ? localParts(t.published_at).date : range.from;
+      let endDate = range.to < today ? range.to : today;
+      if (t.status === "retired" && t.retired_at) {
+        const r = localParts(t.retired_at).date;
+        if (r < endDate) endDate = r;
+      }
+      if (startDate > endDate) continue;
       const currentKey = periodKey(t.cadence, now);
-      for (const pk of periodsInRange(t.cadence, startDate, range.to)) {
+      for (const pk of periodsInRange(t.cadence, startDate, endDate)) {
         const run = runByKey.get(`${t.id}|${pk}`);
         // The period running now only counts once it is overdue (daily with a
         // due time that has passed), or once it has been done.

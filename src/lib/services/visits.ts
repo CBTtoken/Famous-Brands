@@ -94,6 +94,8 @@ export async function checkIn(actor: Actor, input: z.input<typeof checkInInput>,
   }
 
   const visit = await tx(async (c) => {
+    // Lock this person while checking in, so a double tap cannot open two visits.
+    await q(`select id from users where id = $1 for update`, [userId], c);
     // Only one open visit per person. A forgotten check-out is closed here,
     // marked as such, rather than left open forever.
     const open = await q<{ id: string; store_id: string }>(

@@ -3,8 +3,9 @@ import { formatDateTime } from "./core/time";
 
 const cell = (v: unknown) => {
   const s = v == null ? "" : String(v);
-  // Neutralise spreadsheet formulas in anything a person typed.
-  const safe = /^[=+\-@]/.test(s) ? `'${s}` : s;
+  // Neutralise spreadsheet formulas in anything a person typed. Numbers
+  // (latitudes are negative in South Africa) are left as numbers.
+  const safe = typeof v === "string" && /^[=+\-@\t\r]/.test(s) ? `'${s}` : s;
   return /[",\n\r]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
 };
 

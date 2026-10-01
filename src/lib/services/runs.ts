@@ -26,7 +26,8 @@ async function requireOpenVisitAt(actor: Actor, storeId: string) {
 export async function dueChecklists(actor: Actor, visitId: string): Promise<DueChecklist[]> {
   const v = await activeVisit(actor);
   if (!v || v.id !== visitId) throw badRequest("This visit is closed. Check in again.");
-  const role = roleIn(actor, v.org_id) as Role;
+  const { role, store } = await requireStore(actor, v.store_id, "visit.checkin");
+  if (!store.active) throw badRequest(`${store.name} is not active. Ask your admin.`);
   const templates = await q<{ id: string; name: string; category: string; cadence: Cadence; due_by: string | null; items: number }>(
     `select t.id, t.name, t.category, t.cadence, to_char(t.due_by, 'HH24:MI') as due_by,
        (select count(*)::int from template_items i where i.template_id = t.id and not i.retired) as items
@@ -65,6 +66,8 @@ export async function startRun(actor: Actor, templateId: string) {
   const userId = actorUserId(actor);
   const v = await activeVisit(actor);
   if (!v) throw badRequest("Check in at the store first.");
+  const { store } = await requireStore(actor, v.store_id, "visit.checkin");
+  if (!store.active) throw badRequest(`${store.name} is not active. Ask your admin.`);
   const t = await one<{ id: string; org_id: string; name: string; cadence: Cadence; due_by: string | null; roles: Role[]; status: string }>(
     `select id, org_id, name, cadence, due_by, roles, status from checklist_templates where id = $1`,
     [templateId],
@@ -278,7 +281,18 @@ export async function submitRun(actor: Actor, runId: string) {
       missing: missing.map((m) => m.id),
     });
   }
-  await q(`update checklist_runs set status = 'submitted', submitted_at = now() where id = $1`, [runId]);
+  // Lock the run, then check again inside the lock, so an answer being
+  // changed at the same moment cannot slip in after the check.
+  const stillComplete = await tx(async (c) => {
+    const r = await one<{ status: string }>(`select status from checklist_runs where id = $1 for update`, [runId], c);
+    if (r?.status === "submitted") return true;
+    const open = await q<{ id: string }>(
+      `select i.id from run_items i left join answers a on a.run_item_id = i.id where i.run_id = $1 and a.id is null`, [runId], c);
+    if (open.length) return false;
+    await q(`update checklist_runs set status = 'submitted', submitted_at = now() where id = $1`, [runId], c);
+    return true;
+  });
+  if (!stillComplete) throw conflict("A task changed while sending. Please check it and send again.");
   const exceptions = items.filter((i) => i.answer?.is_exception).length;
   await recordEvent(actor, run.org_id, "checklist_run.submitted", "checklist_run", runId, {
     store_id: run.store_id, template_id: run.template_id, items: items.length, exceptions,

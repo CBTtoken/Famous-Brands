@@ -164,6 +164,12 @@ export async function setTemplateStatus(actor: Actor, templateId: string, status
     const n = await one<{ n: number }>(`select count(*)::int as n from template_items where template_id = $1 and not retired`, [templateId]);
     if (!n?.n) throw badRequest("Add at least one task before publishing.");
   }
-  await q(`update checklist_templates set status = $2, updated_at = now() where id = $1`, [templateId, status]);
+  await q(
+    `update checklist_templates set status = $2, updated_at = now(),
+       published_at = case when $2 = 'published' then coalesce(published_at, now()) else published_at end,
+       retired_at = case when $2 = 'retired' then now() when $2 = 'published' then null else retired_at end
+     where id = $1`,
+    [templateId, status],
+  );
   await recordEvent(actor, t.org_id, `checklist.${status}`, "checklist_template", templateId);
 }

@@ -79,7 +79,16 @@ export async function uploadPhoto(actor: Actor, u: PhotoUpload) {
     `insert into photos (org_id, store_id, client_id, storage_key, sha256, bytes, mime, width, height, lat, lng, accuracy_m, client_captured_at, uploaded_by)
      values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) returning id`,
     [store.org_id, store.id, u.clientId, key, sha256, u.bytes.length, kind.mime, kind.width, kind.height, u.lat ?? null, u.lng ?? null, u.accuracyM ?? null, capturedAt, userId],
-  );
+  ).catch(async (e) => {
+    // The same retry arrived twice at once: the other copy won. Use it.
+    if ((e as { code?: string }).code !== "23505") throw e;
+    return null;
+  });
+  if (!row) {
+    const won = await one<{ id: string; uploaded_by: string }>(`select id, uploaded_by from photos where client_id = $1`, [u.clientId]);
+    if (!won || won.uploaded_by !== userId) throw badRequest("Photo reference already used.");
+    return { id: won.id, duplicate: true };
+  }
   await recordEvent(actor, store.org_id, "photo.uploaded", "photo", row!.id, { store_id: store.id, bytes: u.bytes.length, sha256 });
   return { id: row!.id, duplicate: false };
 }

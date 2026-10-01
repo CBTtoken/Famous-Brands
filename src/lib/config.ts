@@ -19,8 +19,12 @@ export const config = {
   sessionDays: Number(process.env.SESSION_DAYS ?? 30),
   // When true, cookies are only sent over HTTPS. Must be true in production.
   secureCookies: process.env.SECURE_COOKIES !== "false" && process.env.NODE_ENV === "production",
-  // Trust X-Forwarded-For from the reverse proxy (Traefik on Coolify).
-  trustProxy: process.env.TRUST_PROXY !== "false",
+  // Read the caller's address from X-Forwarded-For only behind a known proxy.
+  // Traefik appends the real client address as the last entry, so with one
+  // proxy hop we take the last entry: anything a phone puts earlier in the
+  // header is ignored. Off by default; Coolify sets TRUST_PROXY=true.
+  trustProxy: process.env.TRUST_PROXY === "true",
+  proxyHops: Math.max(1, Number(process.env.PROXY_HOPS ?? 1)),
   storage: {
     driver: (process.env.STORAGE_DRIVER ?? "local") as "local" | "s3",
     localDir: process.env.STORAGE_LOCAL_DIR ?? "./.data/photos",

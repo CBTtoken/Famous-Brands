@@ -7,4 +7,4 @@ export const GET = api(async (_req, actor) => {
     kind: "user", id: actor.userId, name: actor.name, is_platform_admin: actor.isPlatformAdmin,
     must_change_password: actor.mustChangePassword, organisations: actor.orgs, active_visit: await activeVisit(actor),
   };
-});
+}, { allowBeforePasswordChange: true });

@@ -15,13 +15,11 @@ export async function actorFromRequest(req: NextRequest): Promise<Actor | null> 
 }
 
 export function clientIp(h: Headers): string | null {
-  if (config.trustProxy) {
-    const xff = h.get("x-forwarded-for");
-    if (xff) return xff.split(",")[0].trim();
-    const real = h.get("x-real-ip");
-    if (real) return real.trim();
-  }
-  return null;
+  if (!config.trustProxy) return null;
+  const xff = h.get("x-forwarded-for");
+  if (!xff) return null;
+  const parts = xff.split(",").map((s) => s.trim()).filter(Boolean);
+  return parts[parts.length - config.proxyHops] ?? null;
 }
 
 /**
@@ -56,7 +54,11 @@ export function errorResponse(e: unknown) {
     );
   }
   const pg = e as { code?: string; message?: string };
-  if (pg?.message?.includes("cannot be changed") || pg?.message?.includes("cannot be deleted")) {
+  // A malformed id is a record that does not exist, not a server fault.
+  if (pg?.code === "22P02") {
+    return NextResponse.json({ error: { code: "not_found", message: "That record was not found, or you do not have access to it." } }, { status: 404 });
+  }
+  if (pg?.message?.includes("cannot be changed") || pg?.message?.includes("cannot be deleted") || pg?.message?.includes("already resolved")) {
     return NextResponse.json({ error: { code: "locked", message: pg.message.replace(/^.*?: /, "") } }, { status: 409 });
   }
   console.error(e);
@@ -72,13 +74,16 @@ export function errorResponse(e: unknown) {
  */
 export function api<P = Record<string, never>>(
   fn: (req: NextRequest, actor: Actor, params: P) => Promise<unknown>,
-  opts: { public?: boolean } = {},
+  opts: { public?: boolean; allowBeforePasswordChange?: boolean } = {},
 ) {
   return async (req: NextRequest, ctx: Ctx<P>) => {
     try {
       if (!sameOrigin(req)) return NextResponse.json({ error: { code: "bad_origin", message: "Request blocked." } }, { status: 403 });
       const actor = await actorFromRequest(req);
       if (!actor && !opts.public) throw unauthenticated();
+      if (actor?.kind === "user" && actor.mustChangePassword && !opts.public && !opts.allowBeforePasswordChange) {
+        throw new AppError(403, "change_password", "Please choose your own password first.");
+      }
       const params = (await ctx.params) ?? ({} as P);
       const out = await fn(req, actor as Actor, params);
       if (out instanceof Response) return out;

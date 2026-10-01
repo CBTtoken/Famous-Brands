@@ -37,9 +37,14 @@ export async function destroySession(token: string) {
   await q(`delete from sessions where token_hash = $1`, [sha256(token)]);
 }
 
-export async function destroyUserSessions(userId: string) {
-  await q(`delete from sessions where user_id = $1`, [userId]);
+export async function destroyUserSessions(userId: string, keepToken: string | null = null) {
+  await q(`delete from sessions where user_id = $1 and ($2::text is null or token_hash <> $2)`, [userId, keepToken ? sha256(keepToken) : null]);
 }
+
+export const loginKey = (login: string) => {
+  const { email, phone } = normaliseLogin(login);
+  return sha256(email ?? phone ?? login.trim().toLowerCase());
+};
 
 async function loadUserActor(userId: string): Promise<UserActor | null> {
   const u = await one<{ id: string; full_name: string; is_platform_admin: boolean; must_change_password: boolean; active: boolean }>(

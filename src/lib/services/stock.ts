@@ -249,8 +249,8 @@ export async function reportCondition(actor: Actor, input: z.input<typeof condit
     if (!p) throw badRequest("That photo belongs to a different store. Please take it again.");
   }
   if (c.walk_id) {
-    const w = await one<{ submitted_at: Date | null; store_id: string }>(`select submitted_at, store_id from condition_walks where id = $1`, [c.walk_id]);
-    if (!w || w.store_id !== store.id) throw notFound("That shop walk");
+    const w = await one<{ submitted_at: Date | null; store_id: string; user_id: string }>(`select submitted_at, store_id, user_id from condition_walks where id = $1`, [c.walk_id]);
+    if (!w || w.store_id !== store.id || w.user_id !== userId) throw notFound("That shop walk");
     if (w.submitted_at) throw conflict("This shop walk is finished and cannot be changed.");
     const prior = await one(`select 1 from condition_reports where walk_id = $1 and store_item_id = $2`, [c.walk_id, c.store_item_id]);
     if (prior) throw conflict("This item is already recorded on this walk.");
@@ -306,7 +306,8 @@ export async function resolveReport(actor: Actor, reportId: string, note: string
   await requireStore(actor, r.store_id, "stock.manage");
   if (r.condition === "fine") throw badRequest("Nothing to resolve on an item marked fine.");
   if (r.resolved_at) throw conflict("This was already marked as dealt with.");
-  await q(`update condition_reports set resolved_at = now(), resolved_by = $2, resolution_note = $3 where id = $1`, [reportId, actorUserId(actor), note?.trim() || null]);
+  const done = await q(`update condition_reports set resolved_at = now(), resolved_by = $2, resolution_note = $3 where id = $1 and resolved_at is null returning id`, [reportId, actorUserId(actor), note?.trim() || null]);
+  if (!done.length) throw conflict("This was already marked as dealt with.");
   await recordEvent(actor, r.org_id, "item_condition.resolved", "condition_report", reportId, { note });
 }
 
@@ -409,7 +410,8 @@ export async function decideReorder(actor: Actor, id: string, decision: "ordered
   const { canOrder } = await requireStore(actor, o.store_id, "stock.view");
   if (!canOrder) throw forbidden("You do not have ordering authority for this store.");
   if (o.status !== "open") throw conflict("This reorder was already decided.");
-  await q(`update reorder_suggestions set status = $2, decided_by = $3, decided_at = now(), decision_note = $4 where id = $1`,
+  const done = await q(`update reorder_suggestions set status = $2, decided_by = $3, decided_at = now(), decision_note = $4 where id = $1 and status = 'open' returning id`,
     [id, decision, actor.kind === "user" ? actor.userId : null, note?.trim() || null]);
+  if (!done.length) throw conflict("This reorder was already decided.");
   await recordEvent(actor, o.org_id, `reorder.${decision}`, "reorder_suggestion", id, { note });
 }

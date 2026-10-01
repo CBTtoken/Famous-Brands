@@ -326,3 +326,36 @@ describe("Check-out", () => {
     await expect(checkOut(supB, v!.id, {}, null)).rejects.toMatchObject({ status: 404 });
   });
 });
+
+describe("Review fixes", () => {
+  it("a group admin cannot reset or change a platform admin, or anyone who belongs to another group", async () => {
+    const { adminResetPassword, updatePerson } = await import("@/lib/services/org");
+    if (platform.kind !== "user") throw new Error();
+    await q(`insert into memberships (org_id, user_id, role) values ($1,$2,'admin') on conflict do nothing`, [orgId, platform.userId]);
+    await expect(adminResetPassword(admin, orgId, platform.userId, "taken-over-123")).rejects.toMatchObject({ status: 403 });
+    await expect(updatePerson(admin, orgId, platform.userId, { email: "attacker@test.invalid" })).rejects.toMatchObject({ status: 403 });
+    // A platform admin can still manage people normally.
+    if (supB.kind !== "user") throw new Error();
+    await expect(adminResetPassword(platform, orgId, supB.userId, "new-first-pass")).resolves.toBeUndefined();
+  });
+  it("an API key cannot change people, whatever its role", async () => {
+    const { adminResetPassword } = await import("@/lib/services/org");
+    const { key } = await createApiKey(admin, orgId, "Admin key", "admin");
+    if (supA.kind !== "user") throw new Error();
+    await expect(adminResetPassword((await actorFromApiKey(key))!, orgId, supA.userId, "x-y-z-1-2-3")).rejects.toMatchObject({ status: 403 });
+  });
+  it("S.O.S never counts days that have not happened yet", async () => {
+    const { addDays, todayLocal } = await import("@/lib/core/time");
+    const t = todayLocal();
+    const s = await sos(areaMgr, orgId, parseRange(t, addDays(t, 30)));
+    const a = s.stores.find((x) => x.store_name === "Store A")!;
+    expect(a.missed).toBe(0);
+  });
+  it("CSV keeps negative numbers as numbers and neutralises typed formulas", async () => {
+    const { reportCsv } = await import("@/lib/csv");
+    const r = await checklistReport(admin, storeA, parseRange());
+    const csv = reportCsv(r);
+    expect(csv).toMatch(/,-26\.26/);
+    expect(csv).not.toMatch(/'-26/);
+  });
+});

@@ -1,6 +1,6 @@
 import "server-only";
 import { after } from "next/server";
-import { one, q, type Db, pool } from "../db";
+import { one, q, tx, type Db, pool } from "../db";
 import type { Actor } from "../core/auth";
 import { requireOrg, visibleStores, type Role } from "../core/authz";
 import { notFound } from "../core/errors";
@@ -162,8 +162,14 @@ export async function getNotificationRules(actor: Actor, orgId: string) {
 export type RuleInput = { tier: Tier; recipient_role?: Role | null; recipient_user_id?: string | null; push: boolean };
 
 /** Replace the organisation's rules in one go, as the admin screen saves them. */
-export async function setNotificationRules(actor: Actor, orgId: string, rules: RuleInput[], db: Db = pool) {
+export async function setNotificationRules(actor: Actor, orgId: string, rules: RuleInput[]) {
   requireOrg(actor, orgId, "org.manage");
+  return tx((db) => saveRules(actor, orgId, rules, db));
+}
+
+async function saveRules(actor: Actor, orgId: string, rules: RuleInput[], db: Db) {
+  // Serialise saves for this group so two admins saving at once cannot double up.
+  await q(`select id from organisations where id = $1 for update`, [orgId], db);
   for (const r of rules) {
     if (r.recipient_user_id) {
       const m = await one(`select 1 from memberships where org_id = $1 and user_id = $2`, [orgId, r.recipient_user_id], db);

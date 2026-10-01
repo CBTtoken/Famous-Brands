@@ -6,10 +6,20 @@ import { config } from "./config";
 // pool is parked on globalThis to avoid leaking connections on every edit.
 const globalForPool = globalThis as unknown as { __sosPool?: Pool };
 
-export const pool =
-  globalForPool.__sosPool ??
-  new Pool({ connectionString: config.databaseUrl, max: config.databasePoolSize });
-if (process.env.NODE_ENV !== "production") globalForPool.__sosPool = pool;
+// Created on first use, not at import, so "next build" (which imports every
+// route) works without a database. The Docker build stage has none.
+function realPool(): Pool {
+  globalForPool.__sosPool ??= new Pool({ connectionString: config.databaseUrl, max: config.databasePoolSize });
+  return globalForPool.__sosPool;
+}
+
+export const pool: Pool = new Proxy({} as Pool, {
+  get(_t, prop) {
+    const p = realPool();
+    const v = Reflect.get(p, prop, p);
+    return typeof v === "function" ? v.bind(p) : v;
+  },
+});
 
 export type Db = Pool | PoolClient;
 

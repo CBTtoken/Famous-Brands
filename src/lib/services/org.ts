@@ -147,6 +147,26 @@ export async function createPerson(actor: Actor, orgId: string, input: z.input<t
   });
 }
 
+/**
+ * An organisation admin may only change people who belong to this group
+ * alone. Platform admins, and people who also belong to another group, can
+ * only be changed by a platform admin, so no group admin can take over an
+ * account that reaches beyond their group. API keys never change people.
+ */
+async function requireManageablePerson(actor: Actor, orgId: string, userId: string) {
+  if (actor.kind === "api_key") throw forbidden("An API key cannot change people.");
+  const m = await one<{ is_platform_admin: boolean; other_orgs: number }>(
+    `select u.is_platform_admin,
+       (select count(*)::int from memberships x where x.user_id = u.id and x.org_id <> $1) as other_orgs
+     from memberships m join users u on u.id = m.user_id where m.org_id = $1 and m.user_id = $2`,
+    [orgId, userId],
+  );
+  if (!m) throw notFound("That person");
+  if (!actor.isPlatformAdmin && (m.is_platform_admin || m.other_orgs > 0)) {
+    throw forbidden("This person also has access outside this group. Ask DigitalFlyer to make this change.");
+  }
+}
+
 export async function updatePerson(
   actor: Actor,
   orgId: string,
@@ -154,8 +174,7 @@ export async function updatePerson(
   input: { full_name?: string; email?: string | null; phone?: string | null; role?: Role; active?: boolean },
 ) {
   requireOrg(actor, orgId, "org.manage");
-  const m = await one(`select 1 from memberships where org_id = $1 and user_id = $2`, [orgId, userId]);
-  if (!m) throw notFound("That person");
+  await requireManageablePerson(actor, orgId, userId);
   if (actor.kind === "user" && actor.userId === userId && (input.active === false || (input.role && input.role !== "admin"))) {
     throw badRequest("You cannot remove your own admin access. Ask another admin.");
   }
@@ -203,19 +222,19 @@ export async function setAssignments(actor: Actor, orgId: string, userId: string
 export async function adminResetPassword(actor: Actor, orgId: string, userId: string, password: string) {
   requireOrg(actor, orgId, "org.manage");
   if (password.length < 8) throw badRequest("The password needs at least 8 characters.");
-  const m = await one(`select 1 from memberships where org_id = $1 and user_id = $2`, [orgId, userId]);
-  if (!m) throw notFound("That person");
+  await requireManageablePerson(actor, orgId, userId);
   await q(`update users set password_hash = $2, must_change_password = true where id = $1`, [userId, await hashPassword(password)]);
   await destroyUserSessions(userId);
   await recordEvent(actor, orgId, "person.password_reset", "user", userId);
 }
 
-export async function changeOwnPassword(actor: Actor, current: string, next: string) {
+export async function changeOwnPassword(actor: Actor, current: string, next: string, keepSessionToken: string | null = null) {
   const userId = actorUserId(actor);
   if (next.length < 8) throw badRequest("Your new password needs at least 8 characters.");
   if (next === current) throw badRequest("Choose a password that is different from the old one.");
   const u = await one<{ password_hash: string }>(`select password_hash from users where id = $1`, [userId]);
   if (!u || !(await verifyPassword(u.password_hash, current))) throw badRequest("Your current password is not right.");
   await q(`update users set password_hash = $2, must_change_password = false where id = $1`, [userId, await hashPassword(next)]);
+  await destroyUserSessions(userId, keepSessionToken);
   await recordEvent(actor, null, "person.password_changed", "user", userId);
 }
