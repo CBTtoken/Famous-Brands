@@ -27,7 +27,7 @@ const atStore = { lat: LAT + 0.0002, lng: LNG, accuracy_m: 12 };
 
 let push: Awaited<ReturnType<typeof startFakePushService>>;
 let platform: Actor, admin: Actor, areaMgr: Actor, shopMgrA: Actor, supA: Actor, supB: Actor, otherAdmin: Actor;
-let orgId: string, otherOrgId: string, storeA: string, storeB: string, otherStore: string;
+let orgId: string, otherOrgId: string, storeA: string, storeB: string;
 
 async function makeUser(name: string, email: string, platformAdmin = false) {
   const u = await one<{ id: string }>(
@@ -58,7 +58,7 @@ beforeAll(async () => {
   otherOrgId = o2!.id;
   storeA = await saveStore(platform, orgId, null, { name: "Store A", latitude: LAT, longitude: LNG, geofence_m: 150, known_ips: ["196.0.0.10"] });
   storeB = await saveStore(platform, orgId, null, { name: "Store B" });
-  otherStore = await saveStore(platform, otherOrgId, null, { name: "Other Store" });
+  await saveStore(platform, otherOrgId, null, { name: "Other Store" });
 
   const mk = async (name: string, email: string, role: "admin" | "area_manager" | "shop_manager" | "supervisor", org = orgId) => {
     const id = await createPerson(platform, org, { full_name: name, email, role, password: "first-password-1" });

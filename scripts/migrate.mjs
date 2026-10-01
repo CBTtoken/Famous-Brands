@@ -2,7 +2,8 @@
 // each in its own transaction. Safe to run on every deploy.
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { Client } from "pg";
+import pg from "pg";
+const { Client } = pg;
 
 async function main() {
   const url = process.env.DATABASE_URL;

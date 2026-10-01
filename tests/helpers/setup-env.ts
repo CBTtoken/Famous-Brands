@@ -18,6 +18,6 @@ process.env.VAPID_PRIVATE_KEY = keys.privateKey;
 const g = globalThis as unknown as { __dbReset?: boolean };
 if (!g.__dbReset) {
   execSync(`psql "${process.env.DATABASE_URL}" -q -c "drop schema public cascade; create schema public;"`, { stdio: "ignore" });
-  execSync("npx tsx scripts/migrate.ts", { env: process.env, stdio: "ignore" });
+  execSync("node scripts/migrate.mjs", { env: process.env, stdio: "ignore" });
   g.__dbReset = true;
 }
