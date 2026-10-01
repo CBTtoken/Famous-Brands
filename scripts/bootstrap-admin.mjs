@@ -9,8 +9,11 @@ import { hash } from "@node-rs/argon2";
 
 async function main() {
   const { DATABASE_URL, BOOTSTRAP_ADMIN_NAME, BOOTSTRAP_ADMIN_EMAIL, BOOTSTRAP_ADMIN_PASSWORD, BOOTSTRAP_ORG_NAME } = process.env;
-  if (!DATABASE_URL || !BOOTSTRAP_ADMIN_NAME || !BOOTSTRAP_ADMIN_EMAIL || !BOOTSTRAP_ADMIN_PASSWORD) {
-    throw new Error("Set DATABASE_URL, BOOTSTRAP_ADMIN_NAME, BOOTSTRAP_ADMIN_EMAIL and BOOTSTRAP_ADMIN_PASSWORD");
+  if (!DATABASE_URL) throw new Error("DATABASE_URL is not set");
+  if (!BOOTSTRAP_ADMIN_NAME || !BOOTSTRAP_ADMIN_EMAIL || !BOOTSTRAP_ADMIN_PASSWORD) {
+    // Runs on every container start; with no bootstrap settings it does nothing.
+    console.log("Bootstrap: no BOOTSTRAP_ADMIN_* settings, nothing to do.");
+    return;
   }
   if (BOOTSTRAP_ADMIN_PASSWORD.length < 12) throw new Error("Use a bootstrap password of at least 12 characters");
   const c = new Client({ connectionString: DATABASE_URL });

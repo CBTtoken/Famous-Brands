@@ -33,4 +33,7 @@ EXPOSE 3000
 VOLUME ["/data"]
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
-CMD ["sh", "-c", "node scripts/migrate.mjs && node server.js"]
+# Migrations on every start. The first-admin script also runs every start but
+# only acts when BOOTSTRAP_ADMIN_* are set AND the database has no users, so
+# the first deploy needs no terminal or SSH access.
+CMD ["sh", "-c", "node scripts/migrate.mjs && node scripts/bootstrap-admin.mjs && node server.js"]
