@@ -28,6 +28,8 @@ COPY --from=build --chown=sos:sos /app/.next/static ./.next/static
 COPY --from=build --chown=sos:sos /app/public ./public
 COPY --from=build --chown=sos:sos /app/db ./db
 COPY --from=build --chown=sos:sos /app/scripts/migrate.mjs /app/scripts/bootstrap-admin.mjs ./scripts/
+# Demo data on request only (node scripts/seed-demo-history.mjs). Never runs on its own.
+COPY --from=build --chown=sos:sos /app/scripts/seed-demo-history.mjs /app/scripts/demo-photo.jpg /app/src/lib/library/smalls-catalogue.json ./scripts/
 USER sos
 EXPOSE 3000
 VOLUME ["/data"]

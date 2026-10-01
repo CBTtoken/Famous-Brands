@@ -2,6 +2,10 @@
 
 Newest first.
 
+## 1 October 2026 (evening): simulated Debonairs demo data
+
+- `scripts/seed-demo-history.mjs`: on request only, makes "DEMO Debonairs franchise (simulated data)" with five demo shops, a demo owner (admin) and one demo supervisor per shop, the client's daily tasks as "Daily opening checks" (start 08:00, due by 10:00), the smalls list in every shop, and two weeks of simulated visits, answers, problems, alerts and item reports. Flagged as a demo group (banner on every screen), every name starts with DEMO, every photo is a grey "DEMO PHOTO" card, logins use `.invalid` addresses, one `demo.history_simulated` event records what was made. Refuses to run twice. Writes to the database directly because the API rightly refuses to record the past.
+
 ## 1 October 2026 (later): Dewald's decisions applied
 
 Built on the Handoff 1 work (branch `claude/confident-heisenberg-c70ifu`), now on `claude/famous-brands-sos-poc-9a6ipo`.
