@@ -15,6 +15,24 @@ Read this before touching hosting, DNS or deployment. Written 1 October 2026, be
 - Server: Xneelo Cloud VM `154.65.106.166`, Ubuntu 24.04, 8 CPU, 16 GB, Coolify. Dashboard `https://coolify.digitalflyer.co.za`. See HelpLift's `INFRASTRUCTURE.md`.
 - The same box runs HelpLift production **and HelpLift's self-hosted Supabase with real data**. Everything below is designed so this app cannot touch either.
 
+## What is deployed (1 October 2026)
+
+All in the existing **Famous Brands** project (`q2jwvhgbt9wo0fwew4pillxp`), environment `production`, on the Coolify server named **localhost** (`0dsoydpduavsqe3j6kzgxdqf`). That is the machine Coolify runs on, the one `sos-poc.digitalflyer.co.za` and `coolify.digitalflyer.co.za` resolve to (`154.65.106.166`), and the one whose Traefik proxy serves ports 80 and 443. HelpLift, CBT-DFGT and their Supabase stacks run on the same server, in their own projects.
+
+| Resource | Coolify name | UUID | Settings |
+|---|---|---|---|
+| Database | `sos-postgres` | `lbirp10sphxls3wjqvf4qgqj` | PostgreSQL 16 (alpine), database and user `sos`, not public, 1 CPU, 512 MB |
+| Database backup | | `fpy8gs6xf0z8ew6cebgucnzp` | Daily 01:15, keeps 14, on the server only (no off-box copy yet) |
+| Application | `sos-app` | `rfpklnktdz3dzewypcltr2mr` | Dockerfile from `CBTtoken/Famous-Brands`, branch `claude/famous-brands-sos-poc-9a6ipo`, port 3000, `https://sos-poc.digitalflyer.co.za`, HTTPS forced, 1 CPU, 768 MB, health check `/api/health`, auto-deploy off |
+| Photo volume | `rfpklnktdz3dzewypcltr2mr-sos-photos` | `by5j6n6nqx9p4pj1edddpf9t` | Mounted at `/data` |
+| Scheduled task | Retry alerts that did not go out | `mybjfs9k70ax9vjmyaea20ps` | Every 5 minutes |
+
+The other two servers in Coolify are not used: **digitalflyer-cloud-01** (`10.0.1.1`, no proxy, nothing on it; it looks like this same machine registered a second time through Docker's internal address) and **Delete** (unreachable).
+
+Secrets (database password, push keys, `CRON_SECRET`, first admin password) were generated for this deployment and live only in the application's environment variables in Coolify. They are not in this repository.
+
+To redeploy after a push: `POST /api/v1/deploy?uuid=rfpklnktdz3dzewypcltr2mr` (a POST; GET answers 405), or Deploy in Coolify. Auto-deploy is off because the repository has no webhook to Coolify.
+
 ## This VM is shared: read HelpLift's rules first
 
 HelpLift's own `INFRASTRUCTURE.md` has a section **"This VM is shared"** that governs every app put on this box. Its rules, as Dewald passed them on (1 October 2026):
